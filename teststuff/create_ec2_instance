@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#ami_id="ami-0ac80df6eff0e70b5"
+ami_id=$(cat current_image_id)
+security_group_id="sg-09d92b10b2cf28523"
+key_pair_name="key_pair1"
+
+json="$(aws ec2 run-instances --image-id $ami_id --count 1 --instance-type t2.micro --key-name $key_pair_name --security-group-ids $security_group_id)" 
+sleep 10
+instance_id=$(echo $json | jq -r '.Instances | .[0] | .InstanceId')
+ip_address=$(echo $json | jq -r '.Instances | .[0] | .PrivateIpAddress')
+echo instance_id:$instance_id
+echo ip_address:$ip_address
+echo $instance_id > last_created_instance_id 

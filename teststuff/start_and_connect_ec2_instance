@@ -1,0 +1,11 @@
+#!/bin/bash
+
+num="$1"
+
+instance_id="$(cat ~/Documents/minecraft_server/last_created_instance_id)"
+aws ec2 start-instances --instance-ids $instance_id
+sleep 5 
+public_dns=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[].Instances[].PublicDnsName' | jq -r .[0])
+#public_dns=$(sed -e 's/^"//' -e 's/"$//' <<<"$public_dns")
+echo "publicdns:$public_dns"
+ssh -i ~/.ssh/key_pair1.pem ubuntu@$public_dns

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+ssh_pvt_key_file="~/.ssh/key_pair1.pem"
+security_group_id="sg-09d92b10b2cf28523"
+key_name="key_pair1"
+current_ami_id=$(cat current_image_id)
+
+create_instance() {
+    json="$(aws ec2 run-instances --image-id $current_ami_id --count 1 --instance-type t2.micro --key-name $key_name --security-group-ids $security_group_id)" 
+    sleep 10
+    instance_id=$(echo $json | jq -r '.Instances | .[0] | .InstanceId')
+    ip_address=$(echo $json | jq -r '.Instances | .[0] | .PrivateIpAddress')
+    echo instance_id:$instance_id
+    #echo ip_address:$ip_address
+    echo $instance_id > current_instance_id 
+   } 
+
+start_and_connect_instance() {
+    instance_id="$(cat current_instance_id)"
+    aws ec2 start-instances --instance-ids $instance_id
+    aws ec2 wait instance-running --instance-ids $instance_id
+
+    public_dns=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[].Instances[].PublicDnsName' | jq -r .[0])
+    echo "publicdns:$public_dns"
+    setsid xterm -e "ssh -i $ssh_pvt_key_file ubuntu@$public_dns" &
+}
+
+update_image() {
+    date_prefix="$(date +'%m/%d/%Y_%H-%M')"
+    instance_id=$(cat current_instance_id) 
+
+    image_id=$(aws ec2 create-image --instance-id $instance_id --name "$date_prefix-mc_img" | jq -r .ImageId) 
+    sleep 10
+    echo "image_id:$image_id"
+    echo $image_id > current_image_id
+}
+
+case "$1" in 
+    --create-instance) create_instance ;;
+    --start-and-connect-instance) start_and_connect_instance ;;
+    --update-image) update_image ;;
+    *) echo "invalid arg" && exit 1 ;;
+esac

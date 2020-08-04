@@ -1,0 +1,102 @@
+{
+    "Groups": [],
+    "Instances": [
+        {
+            "AmiLaunchIndex": 0,
+            "ImageId": "ami-0fda5e448d15a8198",
+            "InstanceId": "i-0df5521d6ada6ff38",
+            "InstanceType": "t2.micro",
+            "KeyName": "key_pair1",
+            "LaunchTime": "2020-08-02T17:16:37.000Z",
+            "Monitoring": {
+                "State": "disabled"
+            },
+            "Placement": {
+                "AvailabilityZone": "us-east-1c",
+                "GroupName": "",
+                "Tenancy": "default"
+            },
+            "PrivateDnsName": "ip-172-31-39-82.ec2.internal",
+            "PrivateIpAddress": "172.31.39.82",
+            "ProductCodes": [],
+            "PublicDnsName": "",
+            "State": {
+                "Code": 0,
+                "Name": "pending"
+            },
+            "StateTransitionReason": "",
+            "SubnetId": "subnet-b12483ee",
+            "VpcId": "vpc-ffe71182",
+            "Architecture": "x86_64",
+            "BlockDeviceMappings": [],
+            "ClientToken": "ee826f9c-dc98-4d59-bd8c-f3e64efe0f50",
+            "EbsOptimized": false,
+            "Hypervisor": "xen",
+            "NetworkInterfaces": [
+                {
+                    "Attachment": {
+                        "AttachTime": "2020-08-02T17:16:37.000Z",
+                        "AttachmentId": "eni-attach-0dc36a845675283e1",
+                        "DeleteOnTermination": true,
+                        "DeviceIndex": 0,
+                        "Status": "attaching"
+                    },
+                    "Description": "",
+                    "Groups": [
+                        {
+                            "GroupName": "minecraft-server-port-forwarding",
+                            "GroupId": "sg-09d92b10b2cf28523"
+                        }
+                    ],
+                    "Ipv6Addresses": [],
+                    "MacAddress": "0e:6a:8e:75:64:bd",
+                    "NetworkInterfaceId": "eni-0b8d20ecaf869f5ed",
+                    "OwnerId": "436345335906",
+                    "PrivateDnsName": "ip-172-31-39-82.ec2.internal",
+                    "PrivateIpAddress": "172.31.39.82",
+                    "PrivateIpAddresses": [
+                        {
+                            "Primary": true,
+                            "PrivateDnsName": "ip-172-31-39-82.ec2.internal",
+                            "PrivateIpAddress": "172.31.39.82"
+                        }
+                    ],
+                    "SourceDestCheck": true,
+                    "Status": "in-use",
+                    "SubnetId": "subnet-b12483ee",
+                    "VpcId": "vpc-ffe71182",
+                    "InterfaceType": "interface"
+                }
+            ],
+            "RootDeviceName": "/dev/sda1",
+            "RootDeviceType": "ebs",
+            "SecurityGroups": [
+                {
+                    "GroupName": "minecraft-server-port-forwarding",
+                    "GroupId": "sg-09d92b10b2cf28523"
+                }
+            ],
+            "SourceDestCheck": true,
+            "StateReason": {
+                "Code": "pending",
+                "Message": "pending"
+            },
+            "VirtualizationType": "hvm",
+            "CpuOptions": {
+                "CoreCount": 1,
+                "ThreadsPerCore": 1
+            },
+            "CapacityReservationSpecification": {
+                "CapacityReservationPreference": "open"
+            },
+            "MetadataOptions": {
+                "State": "pending",
+                "HttpTokens": "optional",
+                "HttpPutResponseHopLimit": 1,
+                "HttpEndpoint": "enabled"
+            }
+        }
+    ],
+    "OwnerId": "436345335906",
+    "ReservationId": "r-0b29232e137343d09"
+}

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+    echo needs arg 
+    exit 1
+fi
+
+image_number="$1"
+instance_id=$(cat last_created_instance_id) 
+
+image_id=$(aws ec2 create-image --instance-id $instance_id --name "$1minecraft_server_img" | jq -r .ImageId) 
+sleep 10
+echo "image_id:$image_id"
+echo $image_id > current_image_id
+
+
