@@ -12,8 +12,16 @@ create_instance() {
     ip_address=$(echo $json | jq -r '.Instances | .[0] | .PrivateIpAddress')
     echo instance_id:$instance_id
     #echo ip_address:$ip_address
+    ipv4_address=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+    echo ipv4_address:$ipv4_address
+    echo ipv4_address > instance_ipv4_address
     echo $instance_id > current_instance_id 
    } 
+
+stop_instance() {
+    instance_id=$(cat current_instance_id)
+    aws ec2 stop-instances --instance-ids $instance_id
+}
 
 start_and_connect_instance() {
     instance_id="$(cat current_instance_id)"
@@ -23,6 +31,7 @@ start_and_connect_instance() {
     public_dns=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[].Instances[].PublicDnsName' | jq -r .[0])
     echo "publicdns:$public_dns"
     setsid xterm -e "ssh -i $ssh_pvt_key_file ubuntu@$public_dns" &
+    #ssh -i $ssh_pvt_key_file ubuntu@$public_dns
 }
 
 update_image() {
@@ -39,5 +48,6 @@ case "$1" in
     --create-instance) create_instance ;;
     --start-and-connect-instance) start_and_connect_instance ;;
     --update-image) update_image ;;
+    --stop-instance) stop_instance ;;
     *) echo "invalid arg" && exit 1 ;;
 esac
