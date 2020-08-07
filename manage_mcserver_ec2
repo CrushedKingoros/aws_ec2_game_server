@@ -5,9 +5,10 @@ security_group_id="sg-09d92b10b2cf28523"
 key_name="key_pair1"
 current_ami_id=$(cat current_image_id)
 instance_id="$(cat current_instance_id)"
+instance_type="t3.small"
 
 create_instance() {
-    json="$(aws ec2 run-instances --image-id $current_ami_id --count 1 --instance-type t2.micro --key-name $key_name --security-group-ids $security_group_id)" 
+    json="$(aws ec2 run-instances --image-id $current_ami_id --count 1 --instance-type $instance_type --key-name $key_name --security-group-ids $security_group_id)" 
     sleep 10
     instance_id=$(echo $json | jq -r '.Instances | .[0] | .InstanceId')
     ip_address=$(echo $json | jq -r '.Instances | .[0] | .PrivateIpAddress')
