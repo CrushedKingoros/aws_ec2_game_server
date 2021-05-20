@@ -5,7 +5,7 @@ security_group_id="sg-09d92b10b2cf28523"
 key_name="key_pair1"
 current_ami_id=$(cat current_image_id)
 instance_id="$(cat current_instance_id)"
-instance_type="t3.small"
+instance_type="t3.medium"
 
 create_instance() {
     json="$(aws ec2 run-instances --image-id $current_ami_id --count 1 --instance-type $instance_type --key-name $key_name --security-group-ids $security_group_id)" 
@@ -27,20 +27,24 @@ stop_instance() {
 start_and_connect_instance() {
     aws ec2 start-instances --instance-ids $instance_id
     aws ec2 wait instance-running --instance-ids $instance_id
-    print_ipv4_address
+    copy_ipv4_address
     public_dns=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[].Instances[].PublicDnsName' | jq -r .[0])
     setsid -f xterm -e "ssh -i $ssh_pvt_key_file ubuntu@$public_dns" 
 }
 
-print_ipv4_address() {
+copy_ipv4_address() {
     ipv4_address=$(aws ec2 describe-instances --instance-ids $instance_id --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
     echo "ipv4_address: $ipv4_address"
+    xclip "$(echo $ipv4_address)"
 }
 
 update_image() {
+    if [ "$1" == "--name" ]; then
+        name="$2"
+    fi
     date_prefix="$(date +'%m/%d/%Y_%H-%M')"
-
-    image_id=$(aws ec2 create-image --instance-id $instance_id --name "$date_prefix-mc_img" | jq -r .ImageId) 
+    image_id=$(aws ec2 create-image --instance-id $instance_id --name "1.16.3-$date_prefix" | jq -r .ImageId) 
+    #aws ec2 wait instance-exists --filters
     sleep 10
     echo "image_id:$image_id"
     echo $image_id > current_image_id
@@ -51,7 +55,7 @@ case "$1" in
     --start-and-connect-instance) start_and_connect_instance ;;
     --update-image) update_image ;;
     --stop-instance) stop_instance ;;
-    --print-ipv4-address) print_ipv4_address ;;
+    --copy-ipv4-address) copy_ipv4_address ;;
     *) echo "invalid arg" && exit 1 ;;
 esac
 
